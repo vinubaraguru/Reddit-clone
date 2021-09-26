@@ -1,8 +1,3 @@
-import { isEmpty, validate } from 'class-validator';
-import User from '../entities/User';
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
-import cookie from 'cookie'
 import Post from '../entities/Post';
 import auth from '../middleware/auth';
 import Sub from '../entities/Sub';
@@ -82,6 +77,30 @@ postRouter.post('/:identifier/:slug/comments',user, auth, async (req, res)=> {
     }catch(err){    
         console.log(err);
         return res.status(404).json({error: 'Post not found'});
+    }
+});
+
+postRouter.get('/:identifier/:slug/comments',user, async (req, res)=> {
+    const {identifier, slug} = req.params;
+    const body = req.body.body
+    try{
+        const post = await Post.findOneOrFail(
+            { identifier, slug })
+        
+        const comments = await Comment.find({
+            where : { post },
+            order: { createdAt : 'DESC'},
+            relations: ['votes']
+        })
+
+        if(res.locals.user){
+            comments.forEach(c=> c.setUserVote(res.locals.user))
+        }
+
+        return res.json(comments);
+    }catch(err){    
+        console.log(err);
+        return res.status(500).json({error: 'Something went wrong'});
     }
 });
 

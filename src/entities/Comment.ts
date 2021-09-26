@@ -1,3 +1,4 @@
+import { Expose } from "class-transformer";
 import {Entity as TOEntity, Column, Index, BeforeInsert, ManyToMany, ManyToOne, JoinColumn, OneToMany} from "typeorm";
 import { makeid, sulgify } from "../utils/helpers";
 import Entity from "./Entity";
@@ -33,6 +34,10 @@ export default class Comment extends Entity {
 
     @OneToMany(()=>Vote, vote => vote.comment)
     votes: Vote[]
+
+    @Expose() get voteScore() : number {
+        return this.votes?.reduce((prev, curr)=> (prev +curr.value || 0),0)
+    }
 
     protected userVote : number
     setUserVote(user: User){
