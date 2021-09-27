@@ -58,7 +58,7 @@ export default function SubPage() {
             console.log(err)
         }
     }
-    const submitComment = async(event : FormDataEvent)=>{
+    const submitComment = async(event)=>{
         event.preventDefault();
         if(newComment.trim() === '') return
         try{
