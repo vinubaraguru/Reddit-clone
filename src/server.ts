@@ -10,6 +10,7 @@ import postRouter from "./routers/posts";
 import cookieParser from "cookie-parser";
 import subRouter from "./routers/subs";
 import miscRouter from "./routers/misc";
+import userRouter from "./routers/users";
 
 dotenv.config();
 const app = express();
@@ -32,6 +33,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/subs', subRouter);
 app.use('/api/misc', miscRouter);
+app.use('/api/users', userRouter)
 app.use(trim);
 
 

@@ -1,12 +1,12 @@
 import axios from 'axios'
-import e from 'express'
-import { Head } from 'next/document'
+import { GetServerSideProps } from 'next'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { SideBar } from '../../../components/SideBar'
-import { Sub } from '../../../types'
+import { Post, Sub } from '../../../types'
 
-export const submit = () => {
+export default function submit() {
     const router = useRouter()
     const {sub: subName} = router.query
 
@@ -23,7 +23,7 @@ export const submit = () => {
         }
       },[subName])
 
-    const submitPost =async(event: FormDataEvent) =>{
+    const submitPost =async(event) =>{
         event.preventDefault();
         if(title.trim() === '')return
         try {
@@ -53,27 +53,48 @@ export const submit = () => {
                                 type="text" 
                                 className="w-full px-3 py-3 border border-gray-500 rounded-focus:ouline-none palceholder"
                                 placeholder="Title"
-                                maxLength={300} value={title}
+                                maxLength={300} 
+                                value={title}
                                 onChange={(e)=> setTitle(e.target.value)}
                             />
-                            <div className="absolute mb-2 text-sm text-gray-500 select-none">
-                                {title.trim().length/300}
+                           <div
+                                className="absolute mb-2 text-sm text-gray-500 select-none focus:border-gray-600"
+                                style={{ top: 11, right: 10 }}
+                            >
+                                {title.trim().length}/300
                             </div>
                         </div>
                         <textarea 
                             className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-gray-600"
                             value={body}
+                            onChange={(e) => setBody(e.target.value)}
                             placeholder="Text(Optional)"
                             rows={4}>
                         </textarea>
                         <div className="flex justify-end">
-                            <button className="px-3 py-1 blue button" type="submit" disabled={title.trim() ===''} >Submit</button>
+                            <button
+                                className="px-3 py-1 blue button"
+                                type="submit"
+                                disabled={title.trim().length === 0}
+                            >
+                                Submit
+                            </button>
                         </div>
-
                     </form>
                 </div>
             </div>
             {sub && <SideBar sub={sub}/>}
         </div>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async({req,res})=>{
+    try {
+        const cookie = req.headers.cookie
+        if(!cookie) throw new Error('Missing auth token cooike');
+        await axios.get('/auth/me', {headers: {cookie}})
+        return {props:{}}
+    } catch (error) {
+        res.writeHead(307, {Location:'/login'}).end()
+    }
 }

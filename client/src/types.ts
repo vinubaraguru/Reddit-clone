@@ -16,6 +16,7 @@ export interface Post {
   }
   
   export interface User {
+    submissions: any;
     username: string
     email: string
     createdAt: string
