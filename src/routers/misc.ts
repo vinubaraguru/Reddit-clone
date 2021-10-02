@@ -69,7 +69,7 @@ miscRouter.post('/vote', user, auth, async (req, res)=> {
 
 miscRouter.get('/top-subs', async(req,res)=>{
   try {
-    const imageUrlExp = `COALESCE('${process.env.APP_URL}/images/' || s."imageUrn" , 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y')`
+    const imageUrlExp = `COALESCE('http://localhost:5000/images/' || s."imageUrn" , 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y')`
     const subs = await getConnection()
       .createQueryBuilder()
       .select(

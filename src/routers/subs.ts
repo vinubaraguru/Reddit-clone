@@ -17,13 +17,12 @@ const subRouter = express.Router();
 const createSub = async ( req : Request, res: Response) => {
     const { name, title, description} = req.body;
     const user = res.locals.user
-    console.log(user)
     try{
      
         let errors: any = {}
         
-        if(isEmpty(name)) errors.username = 'Name must not be empty';
-        if(isEmpty(title)) errors.password = 'Title must not be empty';
+        if(isEmpty(name)) errors.name = 'Name must not be empty';
+        if(isEmpty(title)) errors.title = 'Title must not be empty';
 
 
         const sub =  await getRepository(Sub)
@@ -135,10 +134,30 @@ const uploadSubImage = async (req: Request, res: Response) => {
       return res.status(500).json({ error: 'Something went wrong' })
     }
   }
-  
+
+const searchSubs = async (req: Request, res: Response) => {
+  try {
+    const name =  req.params.name
+    if(isEmpty(name)){
+      return res.status(400).json({error :"Name must not be empty"})
+    }
+    const subs = await getRepository(Sub)
+    .createQueryBuilder()
+    .where('LOWER(name) LIKE :name', {
+      name: `${name.toLowerCase().trim()}%`,
+    })
+    .getMany()
+
+  return res.json(subs)
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ error: 'Something went wrong' })
+  }
+}
 
 subRouter.post('/', user, auth, createSub)
 subRouter.get('/:name', user, getSub)
+subRouter.get('/search/:name', searchSubs)
 subRouter.post(
     '/:name/image',
     user,
@@ -147,5 +166,4 @@ subRouter.post(
     upload.single('file'),
     uploadSubImage
   )
-
 export default subRouter; 

@@ -2,14 +2,17 @@ import axios from 'axios'
 import Head from 'next/head'
 import React, { Fragment, useEffect, useState } from 'react'
 import PostCard from '../components/PostCard'
-import { Post, Sub } from '../types'
+import { Post } from '../types'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useAuthState } from '../context/auth'
 
 export default function Home() {
 
   const [posts, setPosts] = useState<Post[]>([])
   const [topSubs, setTopSubs] = useState<Post[]>([])
+
+  const {authenticated}  = useAuthState();
 
   useEffect(()=>{
     axios.get('/posts')
@@ -50,13 +53,16 @@ export default function Home() {
                   className="flex items-center px-4 py-2 text-xs border-b"
                 >
                   <Link href={`/r/${sub.name}`}>
-                    <Image
-                      src={sub.imageUrl}
-                      alt="Sub"
-                      className="rounded-full cursor-pointer"
-                      width={(6 * 16) / 4}
-                      height={(6 * 16) / 4}
-                    />
+                    <a>
+                      <Image
+                        src={sub.imageUrl}
+                        alt="Sub"
+                        className="rounded-full cursor-pointer"
+                        width={(6 * 16) / 4}
+                        height={(6 * 16) / 4}
+                      />
+                    </a>
+                   
                   </Link>
                   <Link href={`/r/${sub.name}`}>
                     <a className="ml-2 font-bold hover:cursor-pointer">
@@ -66,6 +72,19 @@ export default function Home() {
                   <p className="ml-auto font-med">{sub.postCount}</p>
               </div>
               ))}
+            </div>
+            <div>
+              {
+                authenticated && (
+                  <div className="p-4 border-t-2">
+                    <Link href="/subs/create">
+                      <a className="w-full px-3 py-2 blue button">
+                        Create Community
+                      </a>
+                    </Link>
+                  </div>
+                )
+              }
             </div>
           </div>
         </div>
