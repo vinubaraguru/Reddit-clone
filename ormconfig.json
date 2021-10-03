@@ -3,7 +3,7 @@
    "host": "127.0.0.1",
    "port": 5432,
    "username": "postgres",
-   "password": "Imvb9@1079",
+   "password": "",
    "database": "readit",
    "synchronize": true,
    "logging": false,

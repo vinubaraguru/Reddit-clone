@@ -34,12 +34,12 @@ export default function SubPage() {
       },[identifier,slug])
 
       useEffect(()=>{
-        if(identifier && slug){
+        if(identifier && slug && newComment==""){
           axios.get(`/posts/${identifier}/${slug}/comments`)
           .then(res=>setComments(res.data))
           .catch(err=>router.push('/'))
         }
-      },[identifier,slug])
+      },[identifier,slug,newComment])
     
     
     const vote = async (value: number, comment?: Comment) =>{
@@ -53,7 +53,6 @@ export default function SubPage() {
                 commentIdentifier :  comment?.identifier,
                 value: value
             })
-            console.log(res.data)
         }catch(err){
             console.log(err)
         }
