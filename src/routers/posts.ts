@@ -29,10 +29,15 @@ postRouter.post('/', user, auth, async (req, res)=> {
 
 postRouter.get('/',user,async (req, res)=> {
 
+    const currentPage: number =  (req.query.page || 0) as number
+    const postsPerPage: number = (req.query.count || 0) as number
+
     try {
         const posts = await Post.find({
           order: { createdAt: 'DESC' },
           relations: ['comments', 'votes', 'sub'],
+          skip: currentPage * postsPerPage,
+          take: postsPerPage
         })
         if (res.locals.user) {
           posts.forEach((p) => p.setUserVote(res.locals.user))

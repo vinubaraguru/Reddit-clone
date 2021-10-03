@@ -33,7 +33,7 @@ const PostCard : React.FC<PostCardProps> = ({
 
 
     return (
-        <div key={post.identifier} className="flex mb-4 bg-white rounded">
+        <div key={post.identifier} className="flex mb-4 bg-white rounded" id={post.identifier}>
         <div className="w-10 py-3 text-center bg-gray-200 rounded-l">
            <div className="w-10 text-center bg-gray-200 rounded cursor-pointer hover:bg-gray-300 hover:text-red-500 "
                 onClick={()=> vote(1)}>

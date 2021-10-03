@@ -6,13 +6,36 @@ import { Post } from '../types'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useAuthState } from '../context/auth'
+import { Entity } from 'typeorm'
 
 export default function Home() {
 
+  const [observerdPost, setObserverdPost] = useState("")
   const [posts, setPosts] = useState<Post[]>([])
   const [topSubs, setTopSubs] = useState<Post[]>([])
 
   const {authenticated}  = useAuthState();
+
+  useEffect(()=>{
+   if(!posts || posts.length === 0) return
+   const id = posts[posts.length -1].identifier
+   if(id !== observerdPost){
+     setObserverdPost(id)
+     observedElement(document.getElementById(id))
+   }
+  },[posts])
+
+  const observedElement = (element: HTMLElement) =>{
+    if(!element) return
+    const observer = new IntersectionObserver((Entries)=>{
+      if(Entries[0].isIntersecting ===true){
+        console.log("Reached buttom of the post")
+        observer.unobserve(element)
+      }
+    },{ threshold: 1})
+
+    observer.observe(element)
+  }
 
   useEffect(()=>{
     axios.get('/posts')
