@@ -13,6 +13,7 @@ export default function Home() {
   const [observerdPost, setObserverdPost] = useState("")
   const [posts, setPosts] = useState<Post[]>([])
   const [topSubs, setTopSubs] = useState<Post[]>([])
+  const [page, setPage] = useState(0)
 
   const {authenticated}  = useAuthState();
 
@@ -30,6 +31,7 @@ export default function Home() {
     const observer = new IntersectionObserver((Entries)=>{
       if(Entries[0].isIntersecting ===true){
         console.log("Reached buttom of the post")
+        setPage(page+1)
         observer.unobserve(element)
       }
     },{ threshold: 1})
@@ -38,10 +40,10 @@ export default function Home() {
   }
 
   useEffect(()=>{
-    axios.get('/posts')
-    .then(res=>setPosts(res.data))
+    axios.get(`/posts?page=${page}`)
+    .then(res=>setPosts(res.data? [].concat(...res.data): []))
     .catch(err=>console.log(err))
-  },[])
+  },[page])
 
   useEffect(()=>{
     axios.get('/misc/top-subs')

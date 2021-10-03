@@ -7,6 +7,8 @@ import { Post } from '../types'
 import axios from 'axios'
 import classNames from 'classnames'
 import ActionButton from './ActionButton'
+import { useAuthState } from '../context/auth'
+import { useRouter } from 'next/router'
 
 dayjs.extend(relativeTime)
 
@@ -18,14 +20,17 @@ const PostCard : React.FC<PostCardProps> = ({
    post
 }) =>{  
 
+    const {authenticated} = useAuthState()
+    const router = useRouter()
+
     const vote = async (value) =>{
+      if(!authenticated) router.push('/login')
         try{
             const res = await axios.post('/misc/vote', {
                 identifier : post.identifier,
                 slug : post.slug,
                 value: value
             })
-            console.log(res.data)
         }catch(err){
             console.log(err)
         }
